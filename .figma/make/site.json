@@ -1,0 +1,10 @@
+{
+  "description": "Manage hotel operations efficiently with a local management system designed for small hotels, offering features for room booking, guest registration, and reporting.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

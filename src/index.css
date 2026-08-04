@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+/*
+  Hotel Chibchacum — sistema de diseño.
+  Stance: hospitalidad de boutique cálida. Base crema, tierras apagadas,
+  titulares en serif transicional (Newsreader), texto en Karla, cifras en DM Mono.
+*/
+
+:root {
+  /* Fondo general: blanco roto muy sutil, no crema fuerte */
+  --background: #f5f4f2;
+  /* Texto principal: casi negro, máximo contraste */
+  --foreground: #18181b;
+  /* Tarjetas: blanco puro para destacar sobre el fondo */
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  /* Acción principal: terracota oscuro, legible */
+  --primary: #8c4a2f;
+  --primary-foreground: #ffffff;
+  /* Superficie secundaria: gris cálido visible */
+  --secondary: #eae7e2;
+  --secondary-foreground: #3a3530;
+  /* Superficie apagada */
+  --muted: #f0ede9;
+  /* Texto secundario: suficiente contraste (≥ 4.5:1 sobre blanco) */
+  --muted-foreground: #5c5650;
+  /* Acento verde oscuro con buen contraste */
+  --accent: #2d6a5e;
+  --accent-foreground: #ffffff;
+  /* Bordes visibles pero no pesados */
+  --border: #d4cfc9;
+  --ring: #8c4a2f;
+  --radius: 0.375rem;
+
+  --state-available: #2d6a5e;
+  --state-occupied: #8c4a2f;
+  --state-cleaning: #926c1e;
+  --state-maintenance: #555050;
+}
+
+.dark {
+  --background: #1a1614;
+  --foreground: #ece4d9;
+  --card: #221d1a;
+  --card-foreground: #ece4d9;
+  --primary: #c97a52;
+  --primary-foreground: #1a1614;
+  --secondary: #2e2723;
+  --secondary-foreground: #d9cfc2;
+  --muted: #2a2320;
+  --muted-foreground: #9d9084;
+  --accent: #7fa695;
+  --accent-foreground: #14201b;
+  --border: #382f2a;
+  --ring: #c97a52;
+
+  --state-available: #7fa695;
+  --state-occupied: #c97a52;
+  --state-cleaning: #cfa758;
+  --state-maintenance: #8d857e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --color-state-available: var(--state-available);
+  --color-state-occupied: var(--state-occupied);
+  --color-state-cleaning: var(--state-cleaning);
+  --color-state-maintenance: var(--state-maintenance);
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+/* Barras de scroll ocultas hasta que el usuario hace scroll. */
+@layer utilities {
+  .scroll-quiet {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 220ms ease;
+  }
+  .scroll-quiet:hover,
+  .scroll-quiet:focus-within {
+    scrollbar-color: var(--border) transparent;
+  }
+  .scroll-quiet::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  .scroll-quiet::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  .scroll-quiet:hover::-webkit-scrollbar-thumb,
+  .scroll-quiet:focus-within::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+  }
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+}
