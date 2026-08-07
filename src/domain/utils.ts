@@ -43,11 +43,19 @@ export function formatoFechaHora(valor: string | null | undefined): string {
  * hotelería colombiana).
  */
 export function calcularNoches(ingreso: string, salida: string): number {
-  const a = new Date(ingreso).getTime()
-  const b = new Date(salida).getTime()
-  if (!Number.isFinite(a) || !Number.isFinite(b)) return 1
-  const dias = Math.ceil((b - a) / 86_400_000)
-  return Math.max(1, dias)
+  const a = new Date(ingreso)
+  const b = new Date(salida)
+  if (!Number.isFinite(a.getTime()) || !Number.isFinite(b.getTime())) return 1
+  const diasBase = Math.max(
+    1,
+    (new Date(b.toLocaleDateString('en-CA')).getTime() -
+      new Date(a.toLocaleDateString('en-CA')).getTime()) /
+      86_400_000,
+  )
+  // Regla hotel: salida después de las 4:00 p.m. (hora Bogotá) cobra noche adicional.
+  const horaSalida = b.toLocaleTimeString('en-GB', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' })
+  const recargo = horaSalida > '16:00' ? 1 : 0
+  return Math.max(1, diasBase + recargo)
 }
 
 export const mismaFecha = (valor: string | null | undefined, dia: string): boolean =>

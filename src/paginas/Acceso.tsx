@@ -1,5 +1,6 @@
 /** Pantalla de acceso: inicio de sesión y recuperación de contraseña. */
 
+import fotofachada from '../imports/475786551_3757045577774752_4280862027522278060_n-1.jpg'
 import { useState } from 'react'
 import { useApp } from '../app/store'
 import Icono from '../components/Icono'
@@ -59,14 +60,15 @@ export default function Acceso() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.15fr_1fr]">
-      {/* Panel editorial: identidad del hotel. */}
-      <aside className="relative hidden overflow-hidden bg-[#2a2320] lg:block">
+      {/* Panel editorial: fachada real del hotel. */}
+      <aside className="relative hidden overflow-hidden bg-[#1a1210] lg:block">
         <img
-          src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=1400&h=1800&fit=crop&auto=format"
-          alt="Recepción iluminada de un hotel boutique al anochecer"
-          className="absolute inset-0 size-full object-cover opacity-55"
+          src={fotofachada}
+          alt="Fachada del Hotel Chibchacum"
+          className="absolute inset-0 size-full object-cover object-[50%_55%]"
         />
-        <div className="absolute inset-0 bg-gradient-to-tr from-[#2a2320] via-[#2a2320]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" />
         <div className="relative flex h-full flex-col justify-between p-12 text-[#f4ece1]">
           <div className="flex items-center gap-3">
             <span className="flex size-9 items-center justify-center rounded-full border border-[#f4ece1]/40">
@@ -79,13 +81,9 @@ export default function Acceso() {
               Sistema de gestión
               <span className="block italic text-[#d8b48c]">Hotel Chibchacum</span>
             </h1>
-            <p className="mt-5 text-sm leading-relaxed text-[#f4ece1]/75">
-              Recepción, habitaciones, huéspedes y reportes en un solo lugar. Funciona en la red
-              local del hotel, sin depender de Internet.
-            </p>
           </div>
           <p className="font-mono text-[10px] tracking-[0.2em] text-[#f4ece1]/45 uppercase">
-            {usaApi ? 'Servidor local · Laravel + MySQL' : 'Modo autónomo · equipo de recepción'}
+            Acceso seguro · Personal autorizado
           </p>
         </div>
       </aside>
