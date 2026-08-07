@@ -9,10 +9,13 @@ export const moneda = (valor: number): string =>
 
 export const numero = (valor: number): string => new Intl.NumberFormat('es-CO').format(valor)
 
-/** `2026-08-02T14:30` en la zona horaria local, apto para <input type="datetime-local">. */
+/** `2026-08-02T14:30` en hora de Bogotá (UTC-5 fijo), apto para <input type="datetime-local">. */
 export function aInputLocal(fecha: Date = new Date()): string {
-  const off = fecha.getTimezoneOffset()
-  return new Date(fecha.getTime() - off * 60_000).toISOString().slice(0, 16)
+  // Bogotá no tiene horario de verano: siempre UTC-5.
+  // Se calcula desde UTC puro para no depender de la zona del navegador/SO.
+  const utcMs = fecha.getTime() + fecha.getTimezoneOffset() * 60_000
+  const bogotaMs = utcMs - 5 * 60 * 60_000
+  return new Date(bogotaMs).toISOString().slice(0, 16)
 }
 
 export const hoyISO = (): string => aInputLocal().slice(0, 10)
