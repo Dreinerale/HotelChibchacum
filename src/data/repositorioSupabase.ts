@@ -190,8 +190,13 @@ function mapAuditLog(row: Record<string, unknown>): ExportAuditLog {
  */
 function localAUtc(localStr: string): string {
   if (!localStr) return localStr
-  // new Date("YYYY-MM-DDTHH:MM") sin zona → navegador lo interpreta como hora local
-  const d = new Date(localStr)
+  // El <input type="datetime-local"> entrega "YYYY-MM-DDTHH:MM" SIN zona horaria.
+  // Antes se dejaba que `new Date()` lo interpretara con la zona del navegador/SO,
+  // lo cual desplaza el umbral de las 4:00 p.m. si ese equipo no está en hora
+  // Colombia. Bogotá es UTC-5 fijo (sin horario de verano), así que anexamos
+  // ese offset explícitamente en vez de confiar en el entorno.
+  const conSegundos = localStr.length === 16 ? `${localStr}:00` : localStr
+  const d = new Date(`${conSegundos}-05:00`)
   return Number.isFinite(d.getTime()) ? d.toISOString() : localStr
 }
 
