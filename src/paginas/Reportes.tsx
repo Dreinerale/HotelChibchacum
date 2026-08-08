@@ -42,7 +42,74 @@ function descargarCSV(nombre: string, encabezados: string[], filas: (string | nu
   enlace.click()
   URL.revokeObjectURL(url)
 }
+interface ColumnaExcel {
+  titulo: string
+  ancho: number
+}
 
+function descargarExcelBonito(
+  nombre: string,
+  columnas: ColumnaExcel[],
+  filas: (string | number | null)[][],
+): void {
+  const escapar = (v: string | number | null) =>
+    String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+  const cols = columnas.map((c) => `<col style="width:${c.ancho * 7}px" />`).join('')
+
+  const encabezado = columnas
+    .map((c) => `<th style="background:#8B5E34;color:#ffffff;font-weight:bold;padding:8px 10px;border:1px solid #5A3B1F;text-align:center;white-space:nowrap;font-family:Calibri,Arial,sans-serif;">${escapar(c.titulo)}</th>`)
+    .join('')
+
+  const cuerpo = filas
+    .map((fila, i) => {
+      const fondo = i % 2 === 0 ? '#ffffff' : '#FAF7F2'
+      const celdas = fila
+        .map((v) => `<td style="background:${fondo};padding:6px 10px;border:1px solid #E0DCD5;font-family:Calibri,Arial,sans-serif;font-size:12px;">${escapar(v)}</td>`)
+        .join('')
+      return `<tr>${celdas}</tr>`
+    })
+    .join('')
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8" />
+      <!--[if gte mso 9]>
+      <xml>
+        <x:ExcelWorkbook>
+          <x:ExcelWorksheets>
+            <x:ExcelWorksheet>
+              <x:Name>Registro TRA</x:Name>
+              <x:WorksheetOptions>
+                <x:FreezePanes/>
+                <x:FrozenNoSplit/>
+                <x:SplitHorizontal>1</x:SplitHorizontal>
+                <x:TopRowBottomPane>1</x:TopRowBottomPane>
+              </x:WorksheetOptions>
+            </x:ExcelWorksheet>
+          </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+      </xml>
+      <![endif]-->
+    </head>
+    <body>
+      <table border="0" cellspacing="0" cellpadding="0">
+        <colgroup>${cols}</colgroup>
+        <thead><tr>${encabezado}</tr></thead>
+        <tbody>${cuerpo}</tbody>
+      </table>
+    </body>
+    </html>
+  `
+
+  const url = URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel' }))
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = `${nombre}.xls`
+  enlace.click()
+  URL.revokeObjectURL(url)
+}
 function Barra({ valor, maximo, etiqueta }: { valor: number; maximo: number; etiqueta: string }) {
   const ancho = maximo > 0 ? Math.max(2, (valor / maximo) * 100) : 0
   return (
