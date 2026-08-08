@@ -1,5 +1,5 @@
 {
-  "description": "Manage hotel operations efficiently with a local management system designed for small hotels, offering features for room booking, guest registration, and reporting.",
+  "description": "Sistema de gestión hotelera de Hotel Chibchacum: reservas, check-in/check-out, huéspedes y reportes.",
   "robots": {
     "index": false
   },
