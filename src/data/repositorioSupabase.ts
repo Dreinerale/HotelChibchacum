@@ -245,10 +245,17 @@ export class RepositorioSupabase implements Repositorio {
     return ''
   }
 
-  async restablecerClave(_email: string, _token: string, clave: string): Promise<void> {
-    const { error } = await this.sb.auth.updateUser({ password: clave })
-    if (error) throw new ErrorAplicacion('No se pudo restablecer la contraseña. El enlace puede haber expirado.')
-  }
+  async restablecerClave(email: string, token: string, clave: string): Promise<void> {
+  const { error: errorVerificacion } = await this.sb.auth.verifyOtp({
+    email,
+    token,
+    type: 'recovery',
+  })
+  if (errorVerificacion) throw new ErrorAplicacion('Código inválido o expirado.')
+
+  const { error } = await this.sb.auth.updateUser({ password: clave })
+  if (error) throw new ErrorAplicacion('No se pudo restablecer la contraseña.')
+}
 
   async cambiarClave(_actual: string, nueva: string): Promise<void> {
     const { error } = await this.sb.auth.updateUser({ password: nueva })
