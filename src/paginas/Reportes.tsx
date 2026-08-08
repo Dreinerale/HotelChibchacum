@@ -17,7 +17,7 @@ const INFORMES: { clave: Informe; titulo: string; detalle: string; soloAdmin?: b
   { clave: 'mensual', titulo: 'Ocupación mensual', detalle: 'Promedio por mes del rango' },
   { clave: 'ingresos', titulo: 'Ingresos por fechas', detalle: 'Pagos recibidos y método' },
   { clave: 'huespedes', titulo: 'Historial de huéspedes', detalle: 'Estancias y consumo por persona' },
-  { clave: 'tra', titulo: 'Exportación TRA', detalle: 'CSV para registro oficial MinCIT — solo admin', soloAdmin: true },
+  { clave: 'tra', titulo: 'Exportación TRA', detalle: 'Excel para registro oficial MinCIT — solo admin', soloAdmin: true },
   { clave: 'ocupacion', titulo: 'Ocupación e ingresos', detalle: 'CSV administrativo completo — solo admin', soloAdmin: true },
 ]
 
@@ -42,6 +42,7 @@ function descargarCSV(nombre: string, encabezados: string[], filas: (string | nu
   enlace.click()
   URL.revokeObjectURL(url)
 }
+
 interface ColumnaExcel {
   titulo: string
   ancho: number
@@ -58,50 +59,36 @@ function descargarExcelBonito(
   const cols = columnas.map((c) => `<col style="width:${c.ancho * 7}px" />`).join('')
 
   const encabezado = columnas
-    .map((c) => `<th style="background:#8B5E34;color:#ffffff;font-weight:bold;padding:8px 10px;border:1px solid #5A3B1F;text-align:center;white-space:nowrap;font-family:Calibri,Arial,sans-serif;">${escapar(c.titulo)}</th>`)
+    .map(
+      (c) =>
+        `<th style="background:#8B5E34;color:#ffffff;font-weight:bold;padding:8px 10px;border:1px solid #5A3B1F;text-align:center;white-space:nowrap;font-family:Calibri,Arial,sans-serif;">${escapar(c.titulo)}</th>`,
+    )
     .join('')
 
   const cuerpo = filas
     .map((fila, i) => {
       const fondo = i % 2 === 0 ? '#ffffff' : '#FAF7F2'
       const celdas = fila
-        .map((v) => `<td style="background:${fondo};padding:6px 10px;border:1px solid #E0DCD5;font-family:Calibri,Arial,sans-serif;font-size:12px;">${escapar(v)}</td>`)
+        .map(
+          (v) =>
+            `<td style="background:${fondo};padding:6px 10px;border:1px solid #E0DCD5;font-family:Calibri,Arial,sans-serif;font-size:12px;">${escapar(v)}</td>`,
+        )
         .join('')
       return `<tr>${celdas}</tr>`
     })
     .join('')
 
-  const html = `
-    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-    <head>
-      <meta charset="utf-8" />
-      <!--[if gte mso 9]>
-      <xml>
-        <x:ExcelWorkbook>
-          <x:ExcelWorksheets>
-            <x:ExcelWorksheet>
-              <x:Name>Registro TRA</x:Name>
-              <x:WorksheetOptions>
-                <x:FreezePanes/>
-                <x:FrozenNoSplit/>
-                <x:SplitHorizontal>1</x:SplitHorizontal>
-                <x:TopRowBottomPane>1</x:TopRowBottomPane>
-              </x:WorksheetOptions>
-            </x:ExcelWorksheet>
-          </x:ExcelWorksheets>
-        </x:ExcelWorkbook>
-      </xml>
-      <![endif]-->
-    </head>
-    <body>
-      <table border="0" cellspacing="0" cellpadding="0">
-        <colgroup>${cols}</colgroup>
-        <thead><tr>${encabezado}</tr></thead>
-        <tbody>${cuerpo}</tbody>
-      </table>
-    </body>
-    </html>
-  `
+  const html =
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+    '<head><meta charset="utf-8" />' +
+    '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>' +
+    '<x:Name>Registro TRA</x:Name>' +
+    '<x:WorksheetOptions><x:FreezePanes/><x:FrozenNoSplit/><x:SplitHorizontal>1</x:SplitHorizontal><x:TopRowBottomPane>1</x:TopRowBottomPane></x:WorksheetOptions>' +
+    '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
+    '</head><body>' +
+    `<table border="0" cellspacing="0" cellpadding="0"><colgroup>${cols}</colgroup>` +
+    `<thead><tr>${encabezado}</tr></thead><tbody>${cuerpo}</tbody></table>` +
+    '</body></html>'
 
   const url = URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel' }))
   const enlace = document.createElement('a')
@@ -110,6 +97,7 @@ function descargarExcelBonito(
   enlace.click()
   URL.revokeObjectURL(url)
 }
+
 function Barra({ valor, maximo, etiqueta }: { valor: number; maximo: number; etiqueta: string }) {
   const ancho = maximo > 0 ? Math.max(2, (valor / maximo) * 100) : 0
   return (
@@ -299,15 +287,6 @@ export default function Reportes() {
     await registrarAuditoria('TRA', { desde, hasta, filtroEstadoTRA, filtroHabitacion, filtroNacionalidad }, filas.length)
     setMensajeExport(`Excel TRA exportado: ${filas.length} registros.`)
   }
-Nota importante
-
-Dejé intactos los mismos datos y campos que exige MinCIT para el TRA — solo cambié cómo se ven los títulos y el estilo visual. La exportación de "Ocupación e ingresos" (el otro botón) sigue igual, en CSV plano, ya que no lo mencionaste.
-
-¿Quieres que haga el mismo cambio de estilo también para el export de "Ocupación e ingresos", o solo era para el del TRA?
-
-En descargar cvs agrego eso en la linea 45?
-
-Sí, exactamente ahí. Para que
 
   const exportarOcupacion = async () => {
     if (!esAdmin) {
@@ -401,11 +380,11 @@ Sí, exactamente ahí. Para que
         <div>
           <h1 className="font-serif text-3xl leading-tight">Reportes y exportaciones</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Indicadores de operación y exportaciones CSV
+            Indicadores de operación y exportaciones
           </p>
         </div>
         <Boton variante="contorno" icono="descarga" onClick={exportar}>
-          Exportar CSV
+          {informe === 'tra' ? 'Exportar Excel' : 'Exportar CSV'}
         </Boton>
       </header>
 
@@ -416,7 +395,7 @@ Sí, exactamente ahí. Para que
         <div className="flex gap-3 rounded-lg border border-amber-300/60 bg-amber-50/80 px-4 py-3 dark:border-amber-700/40 dark:bg-amber-900/20">
           <Icono nombre="info" className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-400" />
           <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-300">
-            <strong>Aviso legal:</strong> Este CSV es un documento interno de preparación.
+            <strong>Aviso legal:</strong> Este archivo es un documento interno de preparación.
             El establecimiento debe verificar y realizar el reporte oficial según los canales y plazos
             vigentes de MinCIT/iNNpulsa. Cada exportación queda registrada en el log de auditoría.
           </p>
