@@ -238,21 +238,39 @@ export default function Reportes() {
     }
   }
 
+  const estadoLegible: Record<string, string> = {
+    borrador: 'Incompleto',
+    activo: 'Activo',
+    checkout_realizado: 'Check-out realizado',
+    anulado: 'Anulado',
+  }
+
   const exportarTRA = async () => {
     if (!esAdmin) {
-      setMensajeExport('Solo los administradores pueden exportar CSV TRA.')
+      setMensajeExport('Solo los administradores pueden exportar el Excel TRA.')
       return
     }
     const nombreArchivo = `registro_alojamiento_TRA_${desde}_a_${hasta}`
-    // Columnas mínimas exigidas por MinCIT (TRA Colombia)
-    const encabezados = [
-      'tipo_identificacion', 'numero_identificacion',
-      'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido',
-      'nacionalidad', 'ciudad_residencia',
-      'ciudad_procedencia', 'motivo_viaje',
-      'numero_habitacion', 'tipo_huesped',
-      'fecha_check_in', 'fecha_check_out',
-      'total_acompanantes', 'estado_registro', 'id_registro', 'fecha_creacion',
+    // Mismos datos mínimos exigidos por MinCIT (TRA Colombia), con encabezados legibles
+    const columnas: ColumnaExcel[] = [
+      { titulo: 'Tipo de identificación', ancho: 22 },
+      { titulo: 'Número de identificación', ancho: 20 },
+      { titulo: 'Primer nombre', ancho: 16 },
+      { titulo: 'Segundo nombre', ancho: 16 },
+      { titulo: 'Primer apellido', ancho: 16 },
+      { titulo: 'Segundo apellido', ancho: 16 },
+      { titulo: 'Nacionalidad', ancho: 16 },
+      { titulo: 'Ciudad de residencia', ancho: 18 },
+      { titulo: 'Ciudad de procedencia', ancho: 18 },
+      { titulo: 'Motivo del viaje', ancho: 16 },
+      { titulo: 'N.º habitación', ancho: 14 },
+      { titulo: 'Tipo de huésped', ancho: 16 },
+      { titulo: 'Fecha check-in', ancho: 14 },
+      { titulo: 'Fecha check-out', ancho: 14 },
+      { titulo: 'Acompañantes', ancho: 14 },
+      { titulo: 'Estado del registro', ancho: 18 },
+      { titulo: 'ID de registro', ancho: 14 },
+      { titulo: 'Fecha de creación', ancho: 16 },
     ]
     const filas = registrosFiltradosTRA.map((r) => {
       const h = r.huesped
@@ -272,15 +290,24 @@ export default function Reportes() {
         r.check_in_at.slice(0, 10),
         r.check_out_at?.slice(0, 10) ?? '',
         r.acompanantes,
-        r.estado_registro,
+        estadoLegible[r.estado_registro] ?? r.estado_registro,
         r.id,
         r.created_at.slice(0, 10),
       ]
     })
-    descargarCSV(nombreArchivo, encabezados, filas)
+    descargarExcelBonito(nombreArchivo, columnas, filas)
     await registrarAuditoria('TRA', { desde, hasta, filtroEstadoTRA, filtroHabitacion, filtroNacionalidad }, filas.length)
-    setMensajeExport(`CSV TRA exportado: ${filas.length} registros.`)
+    setMensajeExport(`Excel TRA exportado: ${filas.length} registros.`)
   }
+Nota importante
+
+Dejé intactos los mismos datos y campos que exige MinCIT para el TRA — solo cambié cómo se ven los títulos y el estilo visual. La exportación de "Ocupación e ingresos" (el otro botón) sigue igual, en CSV plano, ya que no lo mencionaste.
+
+¿Quieres que haga el mismo cambio de estilo también para el export de "Ocupación e ingresos", o solo era para el del TRA?
+
+En descargar cvs agrego eso en la linea 45?
+
+Sí, exactamente ahí. Para que
 
   const exportarOcupacion = async () => {
     if (!esAdmin) {
