@@ -49,18 +49,15 @@ export default function CheckOut({ alNavegar }: { alNavegar: (clave: string) => 
     )
   }, [activas, busqueda])
 
-  const abrir = (estancia: EstanciaDetallada) => {
-    const ahora = aInputLocal()
-    const noches = calcularNoches(estancia.fecha_ingreso, ahora)
-    const personas = estancia.adultos + estancia.ninos
-    setSeleccion(estancia)
-    setSalida(ahora)
-    setMetodo(estancia.metodo_pago)
-    setPagado(Math.max(0, noches * estancia.valor_noche * (personas > 0 ? personas : 1) - estancia.pagado))
-    setObservaciones('')
-    setLimpieza(true)
-    setError('')
-  }
+const abrir = (estancia: EstanciaDetallada) => {
+  setSeleccion(estancia)
+  setSalida(aInputLocal())
+  setMetodo(estancia.metodo_pago)
+  setPagado(0) // en blanco: lo llena la administradora según lo que realmente reciba
+  setObservaciones('')
+  setLimpieza(true)
+  setError('')
+}
 
   const noches = seleccion ? calcularNoches(seleccion.fecha_ingreso, salida) : 0
   const totalPersonas = seleccion ? seleccion.adultos + seleccion.ninos : 1
