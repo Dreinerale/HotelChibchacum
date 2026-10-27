@@ -37,7 +37,7 @@ Cambiar de modo no requiere tocar una sola línea de la interfaz.
    npm run preview -- --host 0.0.0.0 --port 5173
    ```
 3. Abrir `http://localhost:5173`.
-4. Ingresar con `admin@chibchacum.co` / `Chibchacum2026*` y **cambiar la contraseña** en *Usuarios*.
+4. Ingresar con la cuenta de administrador inicial (se la entrega el desarrollador por un canal privado) y **cambiar la contraseña** en *Usuarios* en el primer ingreso.
 
 Los datos quedan en el navegador de ese equipo. Para operar con varios computadores, siga la sección 2.
 
